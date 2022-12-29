@@ -48,6 +48,7 @@ jobs:
           files: |
             ../*.deb
             VERSION
+            pkg.conf
       - name: Append changelog
         if: env.distro != 'UNRELEASED'
         uses: softprops/action-gh-release@v1
