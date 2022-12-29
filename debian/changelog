@@ -1,0 +1,5 @@
+rockchip-alsa-config (3.6) stable; urgency=medium
+
+  * Initial release
+
+ -- "Radxa Computer Co., Ltd" <dev@radxa.com>  Thu, 29 Dec 2022 10:56:57 +0800
