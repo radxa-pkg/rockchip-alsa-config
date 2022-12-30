@@ -17,7 +17,7 @@ test:
 # Build
 #
 .PHONY: build
-build: build-doc
+build: build-doc build-symlink
 
 SRC-DOC		:=	.
 DOCS		:=	$(SRC-DOC)/SOURCE
@@ -31,6 +31,14 @@ $(SRC-DOC):
 $(SRC-DOC)/SOURCE: $(SRC-DOC)
 	echo -e "git clone $(shell git remote get-url origin)\ngit checkout $(shell git rev-parse HEAD)" > "$@"
 
+SRC-SYMLINKS	:=	$(wildcard src/alsa/ucm2/conf.d/*)
+SYMLINKS		:=	$(addprefix src/alsa/ucm2/, $(notdir $(SRC-SYMLINKS)))
+.PHONY: build-symlink
+build-symlink: $(SYMLINKS)
+
+src/alsa/ucm2/%: src/alsa/ucm2/conf.d/%
+	ln -s conf.d/$(notdir $@) $@
+
 #
 # Clean
 #
@@ -38,11 +46,15 @@ $(SRC-DOC)/SOURCE: $(SRC-DOC)
 distclean: clean
 
 .PHONY: clean
-clean: clean-doc clean-deb
+clean: clean-doc clean-symlink clean-deb
 
 .PHONY: clean-doc
 clean-doc:
 	rm -rf $(DOCS)
+
+.PHONY: clean-symlink
+clean-symlink:
+	rm -f $(SYMLINKS)
 
 .PHONY: clean-deb
 clean-deb:
