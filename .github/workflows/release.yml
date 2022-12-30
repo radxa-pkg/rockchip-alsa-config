@@ -1,60 +1,64 @@
-name: Build & Release
-on:
-  workflow_dispatch:
-  push:
+PROJECT ?= rockchip-iqfiles
+PREFIX ?= /usr
+ETCDIR ?= /etc
+BINDIR ?= $(PREFIX)/bin
+LIBDIR ?= $(PREFIX)/lib
+SHAREDIR ?= $(PREFIX)/share
+MANDIR ?= $(SHAREDIR)/man
 
-jobs:
-  release:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          submodules: recursive
-          fetch-depth: 0
-      - name: Test
-        run: |
-          make test
-      - name: Build
-        run: |
-          sudo apt-get update
-          sudo apt-get build-dep --no-install-recommends -y .
-          make all deb
-      - name: Check if the latest version is releasable
-        run: |
-          version="$(dpkg-parsechangelog -S Version)"
-          echo "version=$version" >> $GITHUB_ENV
-          echo "changes<<EOF" >> $GITHUB_ENV
-          echo '```' >> $GITHUB_ENV
-          echo "$(dpkg-parsechangelog -S Changes)" >> $GITHUB_ENV
-          echo '```' >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-          if [[ -n "$(git tag -l "$version")" ]]
-          then
-            echo "distro=UNRELEASED" >> $GITHUB_ENV
-          else
-            echo "distro=$(dpkg-parsechangelog -S Distribution)" >> $GITHUB_ENV
-          fi
-          echo "$version" > VERSION
-      - name: Release
-        if: env.distro != 'UNRELEASED'
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ env.version }}
-          body_path: README.md
-          token: ${{ secrets.GITHUB_TOKEN }}
-          target_commitish: main
-          draft: false
-          files: |
-            ../*.deb
-            VERSION
-            pkg.conf
-      - name: Append changelog
-        if: env.distro != 'UNRELEASED'
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ env.version }}
-          body: |
-            ## Changelog for ${{ env.version }}
-            ${{ env.changes }}
-          append_body: true
+.PHONY: all
+all: build
+
+#
+# Test
+#
+.PHONY: test
+test:
+
+#
+# Build
+#
+.PHONY: build
+build: build-doc
+
+$(SRC-MAN)/%: $(SRC-MAN)/%.md
+	pandoc "$<" -o "$@" --from markdown --to man -s
+
+SRC-DOC		:=	.
+DOCS		:=	$(SRC-DOC)/SOURCE
+build-doc: $(DOCS)
+
+$(SRC-DOC):
+	mkdir -p $(SRC-DOC)
+
+.PHONY: $(SRC-DOC)/SOURCE
+$(SRC-DOC)/SOURCE: $(SRC-DOC)
+	echo -e "git clone $(shell git remote get-url origin)\ngit checkout $(shell git rev-parse HEAD)" > "$@"
+
+#
+# Clean
+#
+.PHONY: distclean
+distclean: clean
+
+.PHONY: clean
+clean: clean-doc clean-deb
+
+.PHONY: clean-doc
+clean-doc:
+	rm -rf $(DOCS)
+
+.PHONY: clean-deb
+clean-deb:
+	rm -rf debian/.debhelper debian/${PROJECT} debian/debhelper-build-stamp debian/files debian/*.debhelper.log debian/*.postrm.debhelper debian/*.substvars
+
+#
+# Release
+#
+.PHONY: dch
+dch: debian/changelog
+	gbp dch --debian-branch=main
+
+.PHONY: deb
+deb: debian
+	debuild --no-lintian --lintian-hook "lintian --fail-on error,warning --suppress-tags bad-distribution-in-changes-file -- %p_%v_*.changes" --no-sign
