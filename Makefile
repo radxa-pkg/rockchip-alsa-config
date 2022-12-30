@@ -69,4 +69,4 @@ dch: debian/changelog
 
 .PHONY: deb
 deb: debian
-	debuild --no-sign
+	debuild --no-sign -b
