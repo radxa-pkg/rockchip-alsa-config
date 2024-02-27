@@ -1,3 +1,17 @@
+rockchip-alsa-config (3.6-2) jammy; urgency=medium
+
+  [ ZHANG Yuntian ]
+  * Update CI
+  * Fix incorrect release.yml
+  * Update pkg.conf
+  * Remove distribution restriction
+  * Add CI for automatic release
+
+  [ dependabot[bot] ]
+  * Bump actions/checkout from 3 to 4
+
+ -- "Radxa Computer Co., Ltd" <dev@radxa.com>  Tue, 27 Feb 2024 06:55:53 +0000
+
 rockchip-alsa-config (3.6-1) stable; urgency=medium
 
   * Limit package to rockchip-bullseye channel
