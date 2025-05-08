@@ -12,6 +12,7 @@ Architecture: all
 Section: misc
 Priority: optional
 Depends: ${misc:Depends},
+Replaces: radxa-alsa-config (<= 0.4.2)
 Description: Rockchip specific ALSA configs
  This package provides Rockchip specific ALSA
  config files.
