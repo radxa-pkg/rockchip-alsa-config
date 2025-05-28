@@ -1,3 +1,17 @@
+rockchip-alsa-config (4.0.0-2) noble; urgency=medium
+
+  [ dependabot[bot] ]
+  * Bump actions/upload-artifact from 3 to 4
+  * Bump actions/download-artifact from 3 to 4
+  * Bump softprops/action-gh-release from 1 to 2
+
+  [ Chen Jiali ]
+  * chore: bump alsa-config from linux-6.1-stan-rkr1 to master
+  * chore: add CODEOWNERS
+  * fix: replaces radxa-alsa-config (<= 0.4.2)
+
+ -- "Radxa Computer Co., Ltd" <dev@radxa.com>  Wed, 28 May 2025 10:38:32 +0000
+
 rockchip-alsa-config (4.0.0-1) jammy; urgency=medium
 
   [ ZHANG Yuntian ]
