@@ -1,4 +1,3 @@
 [submodule "src"]
 	path = src
 	url = https://gitlab.com/rockchip_linux_sdk_6.1/linux/external/alsa-config.git
-	branch = master

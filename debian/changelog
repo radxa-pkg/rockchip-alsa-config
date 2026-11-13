@@ -1,3 +1,13 @@
+rockchip-alsa-config (6.12-stan-rkr1.1-1) UNRELEASED; urgency=medium
+
+  [ Chen Jiali ]
+  * chore: add pkg.conf
+
+  [ ZHANG Yuntian ]
+  * chore: update to linux-6.12-stan-rkr1.1
+
+ -- "Radxa Computer Co., Ltd"  Fri, 13 Nov 2026 03:52:05 +0000
+
 rockchip-alsa-config (4.0.0-2) noble; urgency=medium
 
   [ dependabot[bot] ]
